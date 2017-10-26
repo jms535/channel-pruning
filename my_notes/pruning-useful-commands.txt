@@ -1,0 +1,37 @@
+#####################################################
+# Test VGG (Pruned with original 3C implementation) #
+
+$CAFFE_ROOT/build/tools/caffe test -model $HOME/mario/channel-pruning/temp/models/3C-pruned-VGG-16_4x/channel_pruning_VGG-16_3C4x.prototxt -weights $HOME/mario/channel-pruning/temp/models/3C-pruned-VGG-16_4x/channel_pruning_VGG-16_3C4x.caffemodel -iterations 10 -gpu 0
+
+#########################
+# Test VGG (Not Pruned) #
+
+$CAFFE_ROOT/build/tools/caffe test -model $HOME/mario/channel-pruning/temp/models/vgg-16_original_model/vgg.prototxt -weights $HOME/mario/channel-pruning/temp/models/vgg-16_original_model/vgg.caffemodel -iterations 10 -gpu 0
+
+
+###################################
+# Test VGG (Channel-pruned only!) #
+
+$CAFFE_ROOT/build/tools/caffe test -model $HOME/mario/channel-pruning/temp/models/pruned-VGG-16_5x/channel_pruning.prototxt -weights $HOME/mario/channel-pruning/temp/models/pruned-VGG-16_5x/channel_pruning.caffemodel -iterations 10 -gpu 0
+
+#################################################
+# Test Alexnet  (weigth-prunned Han's approach) #
+
+$CAFFE_ROOT/build/tools/caffe  test -model $HOME/mario/channel-pruning/caffe/models/bvlc_alexnet/train_val.prototxt -weights $HOME/mario/channel-pruning/temp/models/han_alexnet/han_alexnet.caffemodel -iterations 10 -gpu 0
+
+########################
+# Alexnet (Not pruned) #
+$CAFFE_ROOT/build/tools/caffe test -model $HOME/mario/channel-pruning/caffe/models/bvlc_alexnet/train_val.prototxt -weights $HOME/mario/channel-pruning/caffe/models/bvlc_alexnet/bvlc_alexnet.caffemodel -iterations 10 -gpu 0 
+
+
+
+#############
+# Prune VGG #
+cd ~/mario/channel-pruning
+python3 train.py -action c3 -caffe 0
+
+
+	
+
+
+

@@ -1,0 +1,29 @@
+######################################
+# Imagenet (extracted, preprocessed) #
+
+/home/gvkalra/mario/datasets/imagenet/bicubicval
+/home/gvkalra/mario/datasets/imagenet/bicubictrain
+
+IMPORTANT!!: As of October 27th, the training data (located in /bicubictrain) set has not been preprocessed in any way. 
+
+########################
+# Imagenet (extracted) #
+
+/media/gvkalra/datasets/val
+/media/gvkalra/datasets/train
+
+NOTE: As of October 27th, Imagenet test set has not been extracted 
+/media/gvkalra/datasets/ILSVRC2012_img_test.tar
+
+
+#########################################
+# Imagenet back-up (original tar files) #
+
+/media/gvkalra/imagenet
+
+
+################################
+# CIFAR-10 (original tar file) #
+
+/home/gvkalra/mario/datasets/cifar-10
+
