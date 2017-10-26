@@ -1,0 +1,168 @@
+gvkalra@gvkalra-titanx:~/mario/channel-pruning$ python3 train.py -action c3 -caffe 0
+no lighting pack
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:537] Reading dangerously large protocol message.  If the message turns out to be larger than 2147483647 bytes, parsing will be halted for security reasons.  To increase the limit (or to disable these warnings), see CodedInputStream::SetTotalBytesLimit() in google/protobuf/io/coded_stream.h.
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:78] The total number of bytes read was 553432081
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stage0 freeze
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+temp/bn_vgg.prototxt
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:537] Reading dangerously large protocol message.  If the message turns out to be larger than 2147483647 bytes, parsing will be halted for security reasons.  To increase the limit (or to disable these warnings), see CodedInputStream::SetTotalBytesLimit() in google/protobuf/io/coded_stream.h.
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:78] The total number of bytes read was 553433057
+run for 500 batches nFeatsPerBatch 100
+Extracting conv1_1 (50000, 64)
+Extracting conv1_2 (50000, 64)
+Extracting conv2_1 (50000, 128)
+Extracting conv2_2 (50000, 128)
+Extracting conv3_1 (50000, 256)
+Extracting conv3_2 (50000, 256)
+Extracting conv3_3 (50000, 256)
+Extracting conv4_1 (50000, 512)
+Extracting conv4_2 (50000, 512)
+Extracting conv4_3 (50000, 512)
+Extracting conv5_1 (50000, 512)
+Extracting conv5_2 (50000, 512)
+Extracting conv5_3 (50000, 512)
+Acc  88.100
+wrote memory data layer to temp/mem_bn_vgg.prototxt
+freezing imgs to temp/frozen500.pickle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stage1 speed3.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:537] Reading dangerously large protocol message.  If the message turns out to be larger than 2147483647 bytes, parsing will be halted for security reasons.  To increase the limit (or to disable these warnings), see CodedInputStream::SetTotalBytesLimit() in google/protobuf/io/coded_stream.h.
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:78] The total number of bytes read was 553433057
+loading imgs from temp/frozen500.pickle
+loaded
+Extracting X relu1_1 From Y conv1_2 stride 1
+Acc  88.100
+spatial_decomposition 90.12070608139038
+run for 500 batches nFeatsPerBatch 100
+Extracting conv1_2 (50000, 64)
+Acc  88.160
+Reconstruction Err 0.0141698825689
+channel_decomposition 66.06586813926697
+Extracting X pool1 From Y conv2_1 stride 1
+Acc  88.040
+rMSE 0.0150652274706
+channel_pruning 46.22542428970337
+Extracting X pool1 From Y conv2_1 stride 1
+Acc  87.980
+spatial_decomposition 81.37090802192688
+run for 500 batches nFeatsPerBatch 100
+Extracting conv2_1 (50000, 128)
+Acc  88.000
+Reconstruction Err 0.033646320255
+channel_decomposition 96.16854739189148
+Extracting X conv2_1 From Y conv2_2 stride 1
+Acc  88.040
+rMSE 0.0406878371439
+channel_pruning 63.9356963634491
+Extracting X relu2_1 From Y conv2_2 stride 1
+Acc  88.120
+spatial_decomposition 102.85719203948975
+run for 500 batches nFeatsPerBatch 100
+Extracting conv2_2 (50000, 128)
+Acc  88.180
+Reconstruction Err 0.0836170995387
+channel_decomposition 100.72534251213074
+Extracting X pool2 From Y conv3_1 stride 1
+Acc  87.740
+rMSE 0.0770040226963
+channel_pruning 47.451956272125244
+Extracting X pool2 From Y conv3_1 stride 1
+Acc  88.060
+spatial_decomposition 134.34577465057373
+run for 500 batches nFeatsPerBatch 100
+Extracting conv3_1 (50000, 256)
+Acc  87.840
+Reconstruction Err 0.0837083955466
+1e2 exceed
+channel_decomposition 141.51571035385132
+Extracting X conv3_1 From Y conv3_2 stride 1
+Acc  88.020
+rMSE 0.068814041168
+channel_pruning 58.90995001792908
+Extracting X relu3_1 From Y conv3_2 stride 1
+Acc  88.000
+spatial_decomposition 133.64008355140686
+run for 500 batches nFeatsPerBatch 100
+Extracting conv3_2 (50000, 256)
+Acc  87.920
+Reconstruction Err 0.138314400365
+1e2 exceed
+channel_decomposition 141.44851994514465
+Extracting X conv3_2 From Y conv3_3 stride 1
+Acc  87.680
+rMSE 0.112921820957
+channel_pruning 62.6920485496521
+Extracting X relu3_2 From Y conv3_3 stride 1
+Acc  87.920
+spatial_decomposition 162.49420952796936
+run for 500 batches nFeatsPerBatch 100
+Extracting conv3_3 (50000, 256)
+Acc  87.900
+Reconstruction Err 0.132125600799
+channel_decomposition 143.0006513595581
+Extracting X pool3 From Y conv4_1 stride 1
+Acc  87.820
+spatial_decomposition 286.6121664047241
+run for 500 batches nFeatsPerBatch 100
+Extracting conv4_1 (50000, 512)
+Acc  87.840
+Reconstruction Err 0.122020058041
+channel_decomposition 286.69549322128296
+Extracting X conv4_1 From Y conv4_2 stride 1
+Acc  87.900
+rMSE 0.0929660335482
+channel_pruning 130.83569431304932
+Extracting X relu4_1 From Y conv4_2 stride 1
+Acc  87.860
+spatial_decomposition 275.0330288410187
+run for 500 batches nFeatsPerBatch 100
+Extracting conv4_2 (50000, 512)
+Acc  87.680
+Reconstruction Err 0.208045769119
+channel_decomposition 286.4176650047302
+Extracting X conv4_2 From Y conv4_3 stride 1
+Acc  87.500
+rMSE 0.121786326683
+channel_pruning 115.50527501106262
+Extracting X relu4_2 From Y conv4_3 stride 1
+Acc  87.440
+spatial_decomposition 353.75062894821167
+run for 500 batches nFeatsPerBatch 100
+Extracting conv4_3 (50000, 512)
+Acc  87.500
+Reconstruction Err 0.231012879331
+channel_decomposition 290.2991678714752
+Extracting X pool4 From Y conv5_1 stride 1
+Acc  87.420
+spatial_decomposition 419.2136929035187
+run for 500 batches nFeatsPerBatch 100
+Extracting conv5_1 (50000, 512)
+Acc  87.500
+Reconstruction Err 0.212852542104
+channel_decomposition 285.8706307411194
+Extracting X relu5_1 From Y conv5_2 stride 1
+Acc  87.580
+spatial_decomposition 411.040962934494
+run for 500 batches nFeatsPerBatch 100
+Extracting conv5_2 (50000, 512)
+Acc  87.440
+Reconstruction Err 0.227267706752
+channel_decomposition 292.10475850105286
+Extracting X relu5_2 From Y conv5_3 stride 1
+Acc  87.400
+spatial_decomposition 393.2543625831604
+run for 500 batches nFeatsPerBatch 100
+Extracting conv5_3 (50000, 512)
+Acc  87.060
+Reconstruction Err 0.233562253828
+channel_decomposition 281.2612462043762
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stage2 saving
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:537] Reading dangerously large protocol message.  If the message turns out to be larger than 2147483647 bytes, parsing will be halted for security reasons.  To increase the limit (or to disable these warnings), see CodedInputStream::SetTotalBytesLimit() in google/protobuf/io/coded_stream.h.
+[libprotobuf WARNING google/protobuf/io/coded_stream.cc:78] The total number of bytes read was 553432081
+caffe test -model temp/3c_3C4x_mem_bn_vgg.prototxt -weights temp/3c_vgg.caffemodel
+gvkalra@gvkalra-titanx:~/mario/channel-pruning$
+
