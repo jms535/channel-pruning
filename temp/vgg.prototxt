@@ -9,15 +9,11 @@ layer {
     bicubic: true
     shuffle: true
     batch_size: 10
-    source: "path/to/ilsvrc12/sourceval.txt"
+    source: "/home/gvkalra/mario/channel-pruning/caffe/data/ilsvrc12/bicubicval.txt"
   }
   transform_param {
     crop_size: 224
-    #scale: 0.0078125
-    mean_file: "temp/bgr.binaryproto" 
-    #mean_value: 104.0
-    #mean_value: 117.0
-    #mean_value: 123.0
+    mean_file: "/home/gvkalra/mario/channel-pruning/temp/bgr.binaryproto"
   }
   include {
     phase: TEST
@@ -33,15 +29,12 @@ layer {
     bicubic: true
     shuffle: true
     batch_size: 32
-    source: "path/to/ilsvrc12/sourcetrain.txt"
+    source: "/home/gvkalra/mario/channel-pruning/caffe/data/ilsvrc12/bicubictrain.txt"
   }
   transform_param {
     crop_size: 224
     mirror: true
-    mean_file: "temp/bgr.binaryproto" 
-    #mean_value: 104.0
-    #mean_value: 117.0
-    #mean_value: 123.0
+    mean_file: "/home/gvkalra/mario/channel-pruning/temp/bgr.binaryproto"
   }
   include {
     phase: TRAIN
