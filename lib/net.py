@@ -31,7 +31,7 @@ class layertypes:
     ReLU = 'ReLU'
     Pooling = 'Pooling'
     Eltwise = 'Eltwise'
-     = ''
+    innerproduct= 'InnerProduct'
 
 class datasets:
     imagenet = 'imagenet'
@@ -115,7 +115,7 @@ class Net():
         self.affines = self.type2names(layer_type='Scale')
         self.pools = self.type2names(layer_type='Pooling')
         self.sums = self.type2names('Eltwise')
-        self. = self.type2names('')
+        self.innerproduct = self.type2names('InnerProduct')
 
     def tf_device(self):
         os.environ['CUDA_VISIBLE_DEVICES'] = cfgs.tf_vis
@@ -371,7 +371,7 @@ class Net():
             names = [names]
         inner = False
         if len(names)==1: # if we pass only 1 name, then we are operating on FC layers? -by Mario
-            for top in self.:
+            for top in self.innerproduct:
                 if names[0] in self.bottom_names[top]:
                     inner = True
                     nBatches = dcfgs.nBatches_fc
@@ -1053,7 +1053,7 @@ class Net():
                 channels *= p[1]
             outputs *= p[0]
             c = s[2]*s[3]*outputs*channels*p[2]*p[3] / self.conv_param_stride(conv)**2
-        elif conv in self.:
+        elif conv in self.innerproduct:
             c = p[0]*p[1]
         else:
             pass
