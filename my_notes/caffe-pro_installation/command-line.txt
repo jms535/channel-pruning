@@ -1,0 +1,10 @@
+
+# 1) Copy the Makefile and the Makefile.config is this folder to your caffe root directory
+# 2) "cd" to your caffe root folder and run :
+     make all -j $(($(nproc) + 1))
+# 3) Done! Pycaffe has already been installed and configured
+
+
+NOTE: Remember pycaffe is configured for python3
+      In case you need any additiontal python3 package please use:
+      pip3 install --user <package name>
