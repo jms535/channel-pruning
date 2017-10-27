@@ -6,7 +6,7 @@ caffe_vis = '0,1,2,3'
 tf_vis = '4,5,6,7'
 accname = None
 frozenname= None
-layer = False
+layer = False # this might be for single layer evalation? Is called in several methods, including c3.solve() -by Mario
 gt_feats = False
 _points_dict_name = "points_dict"
 noTF = False
@@ -44,7 +44,7 @@ class solvers:
     gd = 'gd'
     keras = 'keras'
     tls = "tls"
-class pruning_options:
+class pruning_options: # TODO: Consider adding another pruning option for alexnet, i.e. alexnet=2 -by Mario
     prb=0
     vgg=3
     resnet=4
@@ -53,13 +53,13 @@ class Data:
     lmdb='lmdb'
     pro='pro'
 
-class Models:
+class Models: # TODO: Consider adding a new attribute to the this class for alexnet -by Mario
     vgg='vgg'
     xception='xception'
     resnet='resnet'
     rescifar='rescifar'
 
-class vgg:
+class vgg:  # TODO: Consider adding a new class to hold information about alexnet -by Mario
     model='temp/vgg.prototxt'
     weights='temp/vgg.caffemodel'
     accname='accuracy@5'
@@ -75,16 +75,16 @@ c.dic.keep = 3.
 c.dic.rank_tol = .1
 c.dic.prepooling = 1
 c.dic.alter=0
-c.dic.vh=1
-
-# single layer 
+c.dic.vh=1  # The excution of purning depends on this flag. However it also determines the execution of VH decomposition -by Mario
+           # How to unlink the execution of both algoritms? -by Mario
+# single layer
 c.an = edict()
 c.an.l1 = '' #'conv1_1'
 c.an.l2 = '' #'conv1_2'
 c.an.ratio = 2
 c.an.filter = 0
 
-# resnet 
+# resnet
 c.res=edict()
 c.res.short = 0
 c.res.bn = 1
@@ -119,5 +119,3 @@ c.prototxt= 'temp/vgg.prototxt'
 def set_nBatches(n):
     c.nBatches = n
     c.nBatches_fc=c.nBatches# * 10
-
-

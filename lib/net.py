@@ -57,14 +57,14 @@ class Net():
         else:
             # caffe.set_mode_cpu()
             print("using CPU caffe")
-        self.net = caffe.Net(pt, phase)#, level=2)
+        self.net = caffe.Net(pt, phase)#, level=2) # creates net but not load weights -by Mario
         self.pt_dir = pt
         if model is not None:
             self.net.copy_from(model)
             self.caffemodel_dir = model
         else:
             self.caffemodel_dir = 'temp/model.caffemodel'
-        self.net_param = NetBuilder(pt=pt)
+        self.net_param = NetBuilder(pt=pt) # instantiate the NetBuilder -by Mario
         self.num = None
         self.prunedweights = 0
         self._layers = dict()
@@ -97,12 +97,12 @@ class Net():
         self._points_dict_name = cfgs._points_dict_name
         if 0: self.show_acc('init')
         """stores pruned values, which will be saved to caffemodel later (since Net couldn't be dynamically changed)"""
-        self.WPQ={}
+        self.WPQ={} # stores pruned values, which will be saved to caffemodel later (since Net couldn't be dynamically changed) -by Mario
         self.nonWPQ = {}
         self.bottoms2ch = []
         self.bnidx = []
 
-        self.convs= self.type2names()
+        self.convs= self.type2names()  # convs contains a list of strings -by Mario
         self.spation_convs = []
         self.nonsconvs = []
         for c in self.convs:
@@ -184,7 +184,7 @@ class Net():
     def forward(self, gt=False):
         if gt:
             return self.gt_net.forward()
-        if dcfgs.data == cfgs.Data.pro:
+        if dcfgs.data == cfgs.Data.pro: # The forward pass can use another data format, not lmdb. For what? -by Mario
             # print("use datapro")
             self.dp.forward(True)
             imgs = self.dp["image"][0][0].clone_data("nchw")
@@ -339,7 +339,7 @@ class Net():
 
         if bias is not None:
             conv_param.bias_term = bias
-        
+
         if group is not None:
             conv_param.group = group
 
@@ -385,13 +385,13 @@ class Net():
         def set_points_dict(name, data):
             assert name not in points_dict
             points_dict[name] = data
-        dcfgs.data = cfgs.Data.lmdb
+        dcfgs.data = cfgs.Data.lmdb  # I think this disables the use of Data.pro type of data -by Mario
         if save:
             if points_dict is None:
                 frozen_points = False
                 points_dict = dict()
                 if 0 and self._mem:
-                   self.usexyz() 
+                   self.usexyz()
                 set_points_dict("nPointsPerLayer", nPointsPerLayer)
                 set_points_dict("nBatches", nBatches)
             else:
@@ -422,7 +422,7 @@ class Net():
                 feats_dict[name] = np.ndarray(shape=(nPicsPerBatch * dcfgs.nBatches_fc,chs ))
             else:
                 feats_dict[name] = np.ndarray(shape=(nFeats, self.blobs_channels(name)))
-            print("Extracting", name, feats_dict[name].shape)
+            print("Extracting", name, feats_dict[name].shape) # for a standard run,  names is a list with the conv layers: name = convs -by Mario
         idx = 0
         fc_idx = 0
         if save:
@@ -939,7 +939,7 @@ class Net():
         return np.mean(acc) #, 'std', np.std(acc)
 
     def cum_acc(self, res):
-        self.acc.append(float(res[self._accname]))  
+        self.acc.append(float(res[self._accname]))
 
     def clr_acc(self, show=True):
         self.currentacc = np.mean(self.acc)
@@ -951,7 +951,7 @@ class Net():
         print("show_acc depracate")
         # print('Solved {:40s} Acc {:7.3f}'.format(name, self.accuracy(**kwargs)))
 
-    def finalmodel(self, WPQ=None, **kwargs):
+    def finalmodel(self, WPQ=None, **kwargs): # the prefix for the name of the saved model is added by self.linear() -by Mario
         """ load weights into caffemodel"""
         if WPQ is None:
             WPQ = self.WPQ
@@ -1048,7 +1048,7 @@ class Net():
         if conv in self.convs:
             if conv in self.spation_convs:
                 channels = 1
-            else:         
+            else:
                 assert s[1]==p[1]
                 channels *= p[1]
             outputs *= p[0]
@@ -1201,14 +1201,14 @@ class Net():
             if self.layer_bottom(i) == bn:
                 affine = i
                 break
-        
+
         if 1: print('inverted bn', bn, affine, Y_name)
         mean, std, k, b = self.getBNaff(bn, affine)
         # (y - mean) / std * k + b
         #return (arr - b) * std / k + mean
         return arr * std / k
         #embed()
-        
+
 
     def save_no_bn(self, WPQ, prefix='bn'):
         self.forward()
@@ -1246,7 +1246,7 @@ class Net():
 
         new_pt = self.save_pt(prefix = 'bn')
         return new_pt
-    
+
     def inlineConvBN(self):
         if dcfgs.res.bn:
             for r,a in zip(self.bns, self.affines):
@@ -1281,11 +1281,11 @@ class Net():
             pt = self.seperateConvReLU()
         return WPQ, pt, model
 
-    def R3(self):
+    def R3(self): # TODO: Delete VH and ITQ from R3 to eliminate spatial and channel factorization (tried but failed ㅜㅜ) -by Mario
         speed_ratio = dcfgs.dic.keep
-        if speed_ratio not in [3.]:
+        if speed_ratio not in [3.]: # this if-statement might give a problem if we change the speed-up target. Consider adding more values to the list -by Mario
             NotImplementedError
-        if dcfgs.dic.vh:
+        if dcfgs.dic.vh: # TODO: Consider changing this prefixes to obtained more descriptive names for prototxt files - by Mario
             prefix = '3C'
         else:
             prefix = '2C'
@@ -1295,7 +1295,7 @@ class Net():
         self.WPQ = dict()
         self.selection = dict()
         self._mem = True
-        end = 5
+        end = 5 # TODO: Consider passing a flag to create this dictionaries for other models (passign arguments to the paserser maybe?) -by Mario
         alldic = ['conv%d_1' % i for i in range(1,end)] + ['conv%d_2' % i for i in range(3, end)]
         pooldic = ['conv1_2', 'conv2_2']#, 'conv3_3']
         rankdic = {'conv1_1': 17,
@@ -1314,7 +1314,7 @@ class Net():
 
         for i in rankdic:
             if 'conv5' in i:
-                break
+                continue # the break-statemet was giving a bug, so changed it to continue-statement -by Mario
             rankdic[i] = int(rankdic[i] * 4. / speed_ratio)
         c_ratio = 1.15
 
@@ -1330,9 +1330,9 @@ class Net():
 
         t = Timer()
 
-        for conv, convnext in zip(convs[1:], convs[2:]+['pool5']):
-            conv_V = underline(conv, 'V')
-            conv_H = underline(conv, 'H')
+        for conv, convnext in zip(convs[1:], convs[2:]+['pool5']): # note that we exclude the first conv, conv1_1 contributes little computation -by Mario
+            conv_V = underline(conv, 'V')                          # TODO: Consider getting read of this V,H string builders, but keep in mind that
+            conv_H = underline(conv, 'H')                          # there is dependency between "channel decomposition" and "channel pruning" -by Mario
             conv_P = underline(conv, 'P')
             W_shape = self.param_shape(conv)
             d_c = int(W_shape[0] / c_ratio)
@@ -1398,7 +1398,7 @@ class Net():
             '''channel pruning'''
             if dcfgs.dic.vh and (conv in alldic or conv in pooldic) and (convnext in self.convs):
                 t.tic()
-                #if conv.startswith('conv4'):
+                #if conv.startswith('conv4'): #what is this -by Mario
                 #    c_ratio = 1.5
                 if conv in pooldic:
                     X_name = self.bottom_names[convnext][0]
@@ -1427,7 +1427,7 @@ class Net():
             # setup H
             V_params = self.infer_pad_kernel(self.WPQ[conv_V], conv)
             self.set_conv(conv, new_name=conv_V, **V_params)
-            if 0:#DEBUG: 
+            if 0:#DEBUG:
                 print("V", H_params)
                 print("H", V_params)
         new_pt = self.save_pt(prefix=prefix)
@@ -1458,14 +1458,14 @@ class Net():
                 pb = self.param_b_data(p)
                 neww = Pw.dot(Hw).reshape(newshape)
                 newb = pb + Pw.dot(Hb)
-                
+
                 self.ch_param_data(h, neww)
                 self.ch_param_b(h, newb)
                 self.set_conv(h, num_output=o)
                 self.remove(p)
         a,b = self.save(prefix='cb')
         print('-model',a,'-weights',b)
-                
+
 
 
     def autodet_rank(self, layers, speedratio):
@@ -1481,7 +1481,7 @@ class Net():
                 return bn
         return None
 
-    def W1keep(self, conv, idxs):            
+    def W1keep(self, conv, idxs):
         if dcfgs.model == cfgs.Models.xception:
             assert conv in self.spation_convs
             sconv = conv
@@ -1586,7 +1586,7 @@ class Net():
                 self.set_param_b(top, newB2)
             self.WPQ[(top, 1)] = newB2.copy()
             #self.set_param_b(top, newB2)
-    
+
     def select(self, name, nextname, idxs):
         fname = self.net_param.selector(name, nextname, self.blobs_shape(name), int(sum(idxs)))
         self.nonWPQ[fname] = idxs.astype(int)
@@ -1640,7 +1640,7 @@ class Net():
                         b1sum = blockproj
                     extractResB(b1sum)
 
-        if not isinstance(residual_B, int): 
+        if not isinstance(residual_B, int):
             print("apprixiamating A + resB", dcfgs.dic.option)
         return residual_B
 
@@ -1664,14 +1664,16 @@ class Net():
         newX = np.rollaxis(X.reshape((-1, h, w, X.shape[1])), 3, 1).copy()
 
         W2 = self.param_data(Y_name)
-        if dcfgs.ls != cfgs.solvers.gd or not self._mem: # add paramb
+        if dcfgs.ls != cfgs.solvers.gd or not self._mem: # add paramb # what is this? -by Mario
+            if 1:
+                print("DEBUG net.dictionary_kernel: dcfgs.ls is not gd or there is no memory data -by Mario")
             gtY = self._feats_dict[Y_name] - self.param_b_data(Y_name)
             if 0:
                 print("warning, not accumulative")
                 feats_dict, _ = self.extract_features([Y_name],points_dict=self._points_dict, save=1)
                 Y = feats_dict[Y_name] - self.param_b_data(Y_name)
             else:
-                Y = gtY
+                Y = gtY # Note gtY is only defined inside this if condition, but it is required bellow. This impls this condition should always be true -by Mario
             resY = self.appresb(Y_name)
             if dcfgs.model in [cfgs.Models.xception, cfgs.Models.resnet]:
                 resY = self.invBN(resY, Y_name)

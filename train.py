@@ -19,23 +19,24 @@ from lib.decompose import *
 from lib.net import Net, load_layer, caffe_test
 from lib.utils import *
 from lib.worker import Worker
-
+import google.protobuf.text_format # added to fix missing protobuf properties -by Mario
 sys.path.insert(0, osp.dirname(__file__)+'/lib')
 
 def step0(pt, model):
-    net = Net(pt, model=model, noTF=1)
-    WPQ, pt, model = net.preprocess_resnet()
+    net = Net(pt, model=model, noTF=1)  # lib/net.Net instantiate the NetBuilder -by Mario
+    WPQ, pt, model = net.preprocess_resnet() # WPQ stores pruned values, which will be later saved to the caffemodel -by Mario
     return {"WPQ": WPQ, "pt": pt, "model": model}
 
 def step1(pt, model, WPQ, check_exist=False):
     print(pt)
     net = Net(pt, model, noTF=1)
-    model = net.finalmodel(WPQ)
-    if 1:
+    model = net.finalmodel(WPQ) # loads weights into the caffemodel - by Mario
+    if 1:#TODO: Consider adding a configuration paramter to cfgs.py in order to control whether or not to prune the last conv layer -by Mario
         convs = net.convs
+        redprint("including last conv layer!")
     else:
         convs = net.convs[:-1]
-        redprint("ignoring last conv!")
+        redprint("ignoring last conv layer!")
     if dcfgs.dic.option == 1:
         sums = net.type2names('Eltwise')[:-1]
         newsums = []
@@ -64,25 +65,25 @@ def combine():
     net = Net(dcfgs.prototxt, dcfgs.weights)
     net.combineHP()
 
-def c3(pt=cfgs.vgg.model,model=cfgs.vgg.weights):
+def c3(pt=cfgs.vgg.model,model=cfgs.vgg.weights):-70 #TODO: Consider changing cfgs.vgg.model and cfgs.vgg.weights (paths to the .prototxt and .caffemodel files) for a generic model reference -by Mario
     dcfgs.splitconvrelu=True
-    cfgs.accname='accuracy@5'
+    cfgs.accname='accuracy@5' # name of layer in the prototxt -by Mario
     def solve(pt, model):
         net = Net(pt, model=model)
-        net.load_frozen()
+        net.load_frozen() # this method can load images from memory if we pass a feats_dic. For what?
         WPQ, new_pt = net.R3()
         return {"WPQ": WPQ, "new_pt": new_pt}
 
     def stepend(new_pt, model, WPQ):
         net = Net(new_pt, model=model)
         net.WPQ = WPQ
-        net.finalmodel(save=False)
+        net.finalmodel(save=False) # load weights into the caffemodel -by Mario
         net.dis_memory()
         #final = net.finalmodel(WPQ, prefix='3r')
         new_pt, new_model = net.save(prefix='3c')
         print('caffe test -model',new_pt, '-weights',new_model)
         return {"final": None}
-    
+
     worker = Worker()
     outputs = worker.do(step0, pt=pt, model=model)
     printstage("freeze")
@@ -147,7 +148,7 @@ def parse_args():
         att = getattr(args, i)
         if att is not None:
             dcfgs[i]=type(dcfgs[i])(att)
-    
+
     dcfgs.Action = args.action
     if args.model is not None:
         netmodel = getattr(cfgs, args.model)
