@@ -31,7 +31,7 @@ class layertypes:
     ReLU = 'ReLU'
     Pooling = 'Pooling'
     Eltwise = 'Eltwise'
-    InnerProduct = 'InnerProduct'
+     = ''
 
 class datasets:
     imagenet = 'imagenet'
@@ -71,7 +71,7 @@ class Net():
         self._bottom_names = None
         self._top_names = None
         self.data_layer = 'data'
-        if len(self.type2names('MemoryData')) != 0:
+        if len(self.type2names('MemoryData')) != 0: # what is this for? -by Mario
             self._mem = True
         else:
             self._mem = False
@@ -115,7 +115,7 @@ class Net():
         self.affines = self.type2names(layer_type='Scale')
         self.pools = self.type2names(layer_type='Pooling')
         self.sums = self.type2names('Eltwise')
-        self.innerproduct = self.type2names('InnerProduct')
+        self. = self.type2names('')
 
     def tf_device(self):
         os.environ['CUDA_VISIBLE_DEVICES'] = cfgs.tf_vis
@@ -370,8 +370,8 @@ class Net():
         if not isinstance(names, list):
             names = [names]
         inner = False
-        if len(names)==1:
-            for top in self.innerproduct:
+        if len(names)==1: # if we pass only 1 name, then we are operating on FC layers? -by Mario
+            for top in self.:
                 if names[0] in self.bottom_names[top]:
                     inner = True
                     nBatches = dcfgs.nBatches_fc
@@ -741,9 +741,9 @@ class Net():
 
 
     def freeze_images(self, check_exist=False, convs=None, **kwargs):
-        if cfgs.layer:
-            frozen = self._frozen_layer
-            if check_exist:
+        if cfgs.layer: # flag for pruning single layer -by Mario
+            frozen = self._frozen_layer # code for def _frozen_layer() -using @property- is not difined -by Mario
+            if check_exist: # THIS CODE WAS NOT IMPLEMENTED YET - by Mario
                 pass
             else:
                 pass
@@ -757,7 +757,7 @@ class Net():
         if convs is None:
             convs = self.type2names()
         if cfgs.layer:
-            feats_dict, points_dict = self.extract_layers(convs, **kwargs)
+            feats_dict, points_dict = self.extract_layers(names=convs, **kwargs)
         else:
             feats_dict, points_dict = self.extract_features(names=convs, save=1, **kwargs)
 
@@ -1053,7 +1053,7 @@ class Net():
                 channels *= p[1]
             outputs *= p[0]
             c = s[2]*s[3]*outputs*channels*p[2]*p[3] / self.conv_param_stride(conv)**2
-        elif conv in self.innerproduct:
+        elif conv in self.:
             c = p[0]*p[1]
         else:
             pass

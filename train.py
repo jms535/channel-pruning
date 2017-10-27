@@ -70,7 +70,7 @@ def c3(pt=cfgs.vgg.model,model=cfgs.vgg.weights):-70 #TODO: Consider changing cf
     cfgs.accname='accuracy@5' # name of layer in the prototxt -by Mario
     def solve(pt, model):
         net = Net(pt, model=model)
-        net.load_frozen() # this method can load images from memory if we pass a feats_dic. For what?
+        net.load_frozen() # this method can load images from memory if we pass a feats_dic. For what? -by Mario
         WPQ, new_pt = net.R3()
         return {"WPQ": WPQ, "new_pt": new_pt}
 
