@@ -96,7 +96,7 @@ class Net():
             self.gt_net.copy_from(gt_model)
         self._points_dict_name = cfgs._points_dict_name
         if 0: self.show_acc('init')
-        """stores pruned values, which will be saved to caffemodel later (since Net couldn't be dynamically changed)"""
+
         self.WPQ={} # stores pruned values, which will be saved to caffemodel later (since Net couldn't be dynamically changed) -by Mario
         self.nonWPQ = {}
         self.bottoms2ch = []
@@ -390,8 +390,8 @@ class Net():
             if points_dict is None:
                 frozen_points = False
                 points_dict = dict()
-                if 0 and self._mem:
-                   self.usexyz()
+                if 0 and self._mem: self.usexyz()
+
                 set_points_dict("nPointsPerLayer", nPointsPerLayer)
                 set_points_dict("nBatches", nBatches)
             else:
@@ -435,11 +435,13 @@ class Net():
         for batch in range(runforn):
             if save:
                 if not frozen_points:
+
                     self.forward()
                     set_points_dict((batch, 0), self.data().copy())
                     set_points_dict((batch, 1), self.label().copy())
 
                 else:
+
                     self.net.set_input_arrays(points_dict[(batch, 0)], points_dict[(batch, 1)])
                     self.forward()
             else:
@@ -681,19 +683,21 @@ class Net():
         return feats_dict
 
     def extract_layers(self, names=[], nBatches=30, points_dict=None, gt=False):
+
         if not isinstance(names, list):
             names = [names]
-        DEBUG = False
 
+        DEBUG = False
         feats_dict = dict()
+
         def set_points_dict(name, data):
             assert name not in points_dict
             points_dict[name] = data
 
+        # extract_layers saves by default -by Mario
         if points_dict is None:
             frozen_points = False
             points_dict = dict()
-
             set_points_dict("nBatches", nBatches)
         else:
             frozen_points = True
@@ -706,6 +710,7 @@ class Net():
 
         nPicsPerBatch = self.blobs_num(names[0])
         nFeats = nPicsPerBatch * nBatches
+
         for name in names:
             feats_dict[name] = np.ndarray(shape=[nFeats] + list(self.blobs_shape(name)[1:]))
             print("Extracting", name, feats_dict[name].shape)
@@ -718,7 +723,7 @@ class Net():
         for batch in range(nBatches):
             if not frozen_points:
                 print("done", batch, '/', nBatches)
-                self.forward(gt=gt)
+                self.forward(gt=gt) # gt seems to be related to the execution of single-layer pruning -by Mario
                 set_points_dict((batch, 0), self.data(gt=gt).copy())
                 set_points_dict((batch, 1), self.label(gt=gt).copy())
 

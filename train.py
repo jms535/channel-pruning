@@ -51,7 +51,7 @@ def step1(pt, model, WPQ, check_exist=False):
                 newconvs.append(i)
         convs = newsums + newconvs
     else:
-        convs += net.type2names('Eltwise')[:-1]
+        convs += net.type2names('Eltwise')[:-1] # I guess Element-wise operations are included in ResNet or Xception -by Mario
     if dcfgs.dic.fitfc:
         convs += net.type2names('InnerProduct')
     if dcfgs.model in [cfgs.Models.xception,cfgs.Models.resnet]:
@@ -65,7 +65,7 @@ def combine():
     net = Net(dcfgs.prototxt, dcfgs.weights)
     net.combineHP()
 
-def c3(pt=cfgs.vgg.model,model=cfgs.vgg.weights):-70 #TODO: Consider changing cfgs.vgg.model and cfgs.vgg.weights (paths to the .prototxt and .caffemodel files) for a generic model reference -by Mario
+def c3(pt=cfgs.vgg.model,model=cfgs.vgg.weights): # TODO: Consider changing cfgs.vgg.model and cfgs.vgg.weights (paths to the .prototxt and .caffemodel files) for a generic model reference -by Mario
     dcfgs.splitconvrelu=True
     cfgs.accname='accuracy@5' # name of layer in the prototxt -by Mario
     def solve(pt, model):
