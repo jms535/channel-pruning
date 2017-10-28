@@ -63,7 +63,7 @@ class vgg:  # TODO: Consider adding a new class to hold information about alexne
     model='temp/vgg.prototxt'
     weights='temp/vgg.caffemodel'
     accname='accuracy@5'
-    flop=15346630656
+    flop=15346630656 # FLOP of a model can be calculated with calflop.sh -by Mario
 
 c.dic = edict()
 c.dic.option=pruning_options.prb
