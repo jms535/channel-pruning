@@ -38,6 +38,7 @@ def step1(pt, model, WPQ, check_exist=False):
         convs = net.convs[:-1]
         redprint("ignoring last conv layer!")
     if dcfgs.dic.option == 1:
+        if DEBUG_Mario: redprint("This line executed because dcfgs.dic.option is set to 1 [train.step1()]")
         sums = net.type2names('Eltwise')[:-1]
         newsums = []
         for i in sums:
@@ -166,6 +167,7 @@ if __name__ == '__main__':
 
     dcfgs.dic.option=1
 
+    DEBUG_Mario = 1
     if args.action == cfgs.Action.addbn:
         addbn(pt=dcfgs.prototxt, model=dcfgs.weights)
 

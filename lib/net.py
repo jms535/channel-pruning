@@ -65,7 +65,7 @@ class Net():
         else:
             self.caffemodel_dir = 'temp/model.caffemodel'
         self.net_param = NetBuilder(pt=pt) # instantiate the NetBuilder -by Mario
-        self.num = None
+        self.num = None # batch size of th validation data batch size -by Mario
         self.prunedweights = 0
         self._layers = dict()
         self._bottom_names = None
@@ -419,9 +419,9 @@ class Net():
                 chs = self.blobs_channels(name)
                 if len(self.blobs_shape(name)) == 4:
                     chs*=shapes[name][0]*shapes[name][1]
-                feats_dict[name] = np.ndarray(shape=(nPicsPerBatch * dcfgs.nBatches_fc,chs ))
-            else:
-                feats_dict[name] = np.ndarray(shape=(nFeats, self.blobs_channels(name)))
+                feats_dict[name] = np.ndarray(shape=(nPicsPerBatch * dcfgs.nBatches_fc,chs )) # This dict holds an entry for each conv layer Each dictionary entry will have 5000 rows,
+            else:                                                                             #  each holding 1 point per layers channel (e.g. conv1_1 has 64 channels, then the shape of
+                feats_dict[name] = np.ndarray(shape=(nFeats, self.blobs_channels(name)))      # feat_dict is (5000,64)
             print("Extracting", name, feats_dict[name].shape) # for a standard run,  names is a list with the conv layers: name = convs -by Mario
         idx = 0
         fc_idx = 0
@@ -435,13 +435,11 @@ class Net():
         for batch in range(runforn):
             if save:
                 if not frozen_points:
-
                     self.forward()
                     set_points_dict((batch, 0), self.data().copy())
                     set_points_dict((batch, 1), self.label().copy())
 
                 else:
-
                     self.net.set_input_arrays(points_dict[(batch, 0)], points_dict[(batch, 1)])
                     self.forward()
             else:
@@ -486,6 +484,7 @@ class Net():
                                 randy = points_dict[(batch, branchrandxy , "randy")]
 
                         if name.endswith('_conv1') and dcfgs.dic.option == 1:
+                            if DEBUG_Mario: redprint("this line executed becase dcfgs.dic.option is 1 [net.extract_features()]")
                             fsums = ['first_conv'] + self.sums
                             blockname = name.partition('_conv1')[0]
                             nextb1  = fsums[fsums.index(blockname+'_sum')-1]
@@ -1635,6 +1634,7 @@ class Net():
                         b1sum = self.sums[self.sums.index(b1sum) - 1]
                         extractResB(b1sum)
             elif dcfgs.dic.option==1:
+                if DEBUG_Mario: redprint("This line executed because dcfgs.dic.option is set to 1 [net.appresb()]")
                 b2c = '_conv1'
                 if Y_name.endswith(b2c):
                     fsums = ['first_conv'] + self.sums
