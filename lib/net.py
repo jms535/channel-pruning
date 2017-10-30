@@ -1408,6 +1408,26 @@ class Net():
                     X_name = self.bottom_names[convnext][0]
                 else:
                     X_name = conv
+                """
+                dictionary_kernel() is a function wrapper of the fucntion dictionary() which
+                performes the feature maps selection (lasso reression and mean square error minization)
+
+                ===== Relation to Figure 2 of the paper =====
+                - layer B = conv = Xname
+                  The conv layer from which we will remove feature maps
+                  W1!
+                  Weiths from this layer are denoted as W1. Filters in W1
+                  are removed at the very end (simply use the index of the removed
+                  feature maps of this layer to remove the corresponding filters)
+
+                - layer C = convnext = Y_name
+                  The conv layer  that we use as ground truth to minimize the
+                  error during B's feature map selection, that is, theb squared error of the sampled points
+                  stored in feats_dict ) and the real feature activations.
+                  W2!
+                  Weighs of this layer are denoted as W2. The value of these weights is used during
+                  the lasso regression execution
+                """
                 idxs, W2, B2 = self.dictionary_kernel(X_name, None, d_c, convnext, None)
                 # W2
                 self.selection[convnext] = idxs
@@ -1653,16 +1673,16 @@ class Net():
         """ channel pruning algorithm wrapper
         X_name: the conv layer to prune
         weights: deprecated
-        d_prime: number of perserving channels (c' in paper), the speed-up ratio = d_prime / number of channels
+        d_prime: number of preserving channels (c' in paper), the speed-up ratio = d_prime / number of channels
         Y_name: the next conv layer (For later removing of corresponding pruned weights)
         Y: deprecated
         """
         # weights,Y is None
-        if not self._mem:
+        if not self._mem: # if we have not extracted sample features before, then extract them
             feats_dict, points_dict = self.extract_features([X_name, Y_name], save=1)
             self.load_frozen(feats_dict=feats_dict, points_dict=points_dict )
 
-        X = self.extract_XY(X_name, Y_name)
+        X = self.extract_XY(X_name, Y_name) # extract_XY(conv, convnext)
         N = self.blobs_num(Y_name)
         h = self.param_shape(Y_name)[-1]
         w=h
@@ -1670,15 +1690,16 @@ class Net():
 
         W2 = self.param_data(Y_name)
         if dcfgs.ls != cfgs.solvers.gd or not self._mem: # add paramb # what is this? -by Mario
-            if 1:
-                print("DEBUG net.dictionary_kernel: dcfgs.ls is not gd or there is no memory data -by Mario")
-            gtY = self._feats_dict[Y_name] - self.param_b_data(Y_name)
+            if DEBUG_Mario: print("net.dictionary_kernel: dcfgs.ls is not gd or there is no MemoryData -by Mario")
+            gtY = self._feats_dict[Y_name] - self.param_b_data(Y_name) # compute the difference between what the extracted feature and the biases of the next layer ??? -by Mario
             if 0:
                 print("warning, not accumulative")
                 feats_dict, _ = self.extract_features([Y_name],points_dict=self._points_dict, save=1)
                 Y = feats_dict[Y_name] - self.param_b_data(Y_name)
             else:
-                Y = gtY # Note gtY is only defined inside this if condition, but it is required bellow. This impls this condition should always be true -by Mario
+                if DEBUG_Mario: print("gtY is only defined in this if-condition, but it is required bellow --> this condition is always be true?")
+                Y = gtY
+
             resY = self.appresb(Y_name)
             if dcfgs.model in [cfgs.Models.xception, cfgs.Models.resnet]:
                 resY = self.invBN(resY, Y_name)
@@ -1690,9 +1711,9 @@ class Net():
             Y=newX.reshape(newX.shape[0],-1).dot(W2.reshape((W2.shape[0],-1)).T)
 
         print("rMSE", rel_error(newX.reshape((newX.shape[0],-1)).dot(W2.reshape((W2.shape[0],-1)).T), gtY))
-        if dcfgs.ls == cfgs.solvers.gd: self.tf_device()
+        # performe the lasso regression -by Mario
         outputs = dictionary(newX, W2, Y, rank=d_prime, B2=self.param_b_data(Y_name))
-        if dcfgs.ls == cfgs.solvers.gd: self.caffe_device()
+        if dcfgs.ls == cfgs.solvers.gd: self.caffe_device() # if the solver is gd(what is gd?), set GPU operation
         #Y_shape = self.param_shape(Y_name)
         #X_shape = self.param_shape(X_name)
         #self.prunedweights+= (Y_shape[1] - len(np.where(outputs[0])[0])) * (Y_shape[0]*Y_shape[2]*Y_shape[3] + X_shape[1]*X_shape[2]*X_shape[3])
